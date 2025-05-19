@@ -1,3 +1,14 @@
 pub trait Matchable {
-    fn matchme(self, tomatch: &str) -> Option<usize>;
+    fn matchesof(&self, tomatch: &str) -> Vec<usize>;
+    fn nextmatch(&self) -> &str;
 }
+
+struct MatchOutcome<'a> {
+    matched: &'a str,
+    matches: Vec<usize>
+}
+
+// impl MatchOutcome {
+//     fn nextmatch 
+// }
+

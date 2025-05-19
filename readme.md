@@ -1,4 +1,5 @@
-Starting simple. I will return to this document folloring strict reading - this is my barebone thoughts going into the project.
+Starting simple. This is a basic planning page for me - what/how I intend to implement things. I will return to this document folloring strict reading - this is my barebone thoughts going into the project.
+I'd also imagine it sets the tone for this project. I'd like it to be professional enough I can showcase it, but in the end, I'm doing this for myself. I can have a *little* fun.
 General (EARLY!!!) idea is to initialize a regex pattern as a collection of tokens - with each token implementing a "match" trait.
 - I might be getting my terminology conflated here (this might not follow a strict definition of a token), but my "token"s should be able to be defined recursively. A single token could be `(abc)+`, while it in fact contains the tokens `a`,`b`, and `c`.
 - - then, calling the match function on a token should recurse down until it gets to the lowest-level match. in the above example, calling match on `(abc)+` should result in the token object representing `(abc)+` attempting to call match on 
