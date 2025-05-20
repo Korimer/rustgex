@@ -4,7 +4,7 @@ General (EARLY!!!) idea is to initialize a regex pattern as a collection of toke
 - I might be getting my terminology conflated here (this might not follow a strict definition of a token), but my "token"s should be able to be defined recursively. A single token could be `(abc)+`, while it in fact contains the tokens `a`,`b`, and `c`.
 - - then, calling the match function on a token should recurse down until it gets to the lowest-level match. in the above example, calling match on `(abc)+` should result in the token object representing `(abc)+` attempting to call match on 
 - Any ocurrence indicators should similarly take ownership of a token, and be a token themselves. As with the above example, the full heirarchy would be `(abc)+`, which contains the token `(abc)`, which contains the tokens `a`,`b`, and `c`.
-- Then, any full regex pattern is just as well a single matchable token.
+- Then, any full regex pattern is just as well a single matchable token - think of it like a root node in a tree.
 A token should have an idea of its state - on generation(?), it will all possible matches within its context.
 - This can be saved as a vector of integers, with the ints being the length of the match.
 - - This decision might make backreferences evil, so I may re-evaluate later.
@@ -14,7 +14,11 @@ A token should have an idea of its state - on generation(?), it will all possibl
 - Maybe have two phases? Generation and initialization.
 This is an inherently heirarchical structure, and it's without need for parent references so I shouldn't run into any huge issues with the ~~reddit mod~~ borrow checker.
 
-
-
-
-cant wait to return to this in like 2 weeks thinking i was insane for even considering it lol
+encountered problems/issues
+- Can't literal match a zero space (`()` in regex)
+- - Will need a custom matcher struct for that, then
+- Max cleanliness means that we should really only have one string that the entire regex class can match on, rather than having each matchable token have a copy of or pointer to the string.
+- - not really an issue per say but its a little bit nastier to implement
+- parsing for optionals (`|` in regex) is a little bit trickier, since there's no upfront indication of their presence. 
+- - Multiple passes necessary?
+- - Or, have the root token (see above notes on implementation) work more like an B-Tree, and split/grow up upon encountering an option?
