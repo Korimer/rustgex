@@ -1,6 +1,14 @@
 use crate::matchable::{self, *};
-struct Literal {
+pub struct Literal {
     chars: Vec<char>
+}
+
+impl Literal {
+    pub fn new(string: &str) -> Self {
+        Literal {
+            chars: matchable::tochararr(string)
+        }
+    }
 }
 
 struct Token<T: Matchable> {
@@ -20,31 +28,32 @@ impl <'a,T: Matchable> Matchable for Token<T> {
     }
 }
 
-impl <'a> Matchable for Literal {
+impl Matchable for Literal {
     fn matchesof(&self, tomatch: &str) -> Vec<(usize,usize)> {
         let textchars = tochararr(tomatch);
         let mut completed = Vec::<(usize,usize)>::new();
         let mut tenative = Vec::<TextCord>::new();
         for i in 0..tomatch.len() {
-            tenative.push(TextCord{from: i, to: i});
+            tenative.push(TextCord{from: i, len: 0});
             
             let mut j = 0; 
-            while j < self.chars.len() {
+            while j < tenative.len() {
+                let mut incr = true;
                 let pos = &mut tenative[j];
                 let start = pos.from;
-                let cur = &mut pos.to;
+                let cur = &mut pos.len;
                 if self.chars[*cur] == textchars[start+*cur] {
                     *cur += 1;
                     if *cur == self.chars.len() {
                         completed.push(tenative.remove(j).totup());
-                        j-=1;
+                        incr = false;
                     }
                 }
                 else {
                     tenative.remove(j);
-                    j-=1;
+                    incr = false;
                 }
-                j+=1;
+                if incr {j+=1;}
             }
         }
         completed
@@ -53,10 +62,10 @@ impl <'a> Matchable for Literal {
 
 struct TextCord {
     from: usize,
-    to: usize
+    len: usize
 }
 impl TextCord {
     fn totup(self) -> (usize,usize) {
-        (self.from,self.to)
+        (self.from,self.len)
     }
 }
