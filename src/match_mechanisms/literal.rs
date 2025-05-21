@@ -1,25 +1,40 @@
 use crate::matchable::*;
 
-pub struct Literal {
+pub struct LiteralMatcher {
     chars: Vec<char>
 }
+pub struct CountedMatcher {
+    literal: LiteralMatcher,
+    count: usize
+}
 
-impl Literal {
+impl LiteralMatcher {
     pub fn new(string: &str) -> Self {
-        Literal {
+        LiteralMatcher {
             chars: tochararr(string)
         }
     }
 }
+impl CountedMatcher {
+    pub fn new(string: &str) -> Self {
+        let mut puretext = Vec::new();
+        let mut numtext = "";
+        CountedMatcher {
+            literal: LiteralMatcher {
+                chars: puretext
+            },
+            count: 0
+        }
+    }
+}
 
-impl Matchable for Literal {
+impl Matchable for LiteralMatcher {
     fn matchesof(&self, tomatch: &str) -> Vec<(usize,usize)> {
         let textchars = tochararr(tomatch);
         let mut completed = Vec::<(usize,usize)>::new();
         let mut tenative = Vec::<TextCord>::new();
         for i in 0..tomatch.len() {
             tenative.push(TextCord{from: i, len: 0});
-            
             let mut j = 0; 
             while j < tenative.len() {
                 let mut incr = true;

@@ -14,7 +14,7 @@ A token should have an idea of its state - on generation(?), it will all possibl
 - Maybe have two phases? Generation and initialization.
 This is an inherently heirarchical structure, and it's without need for parent references so I shouldn't run into any huge issues with the ~~reddit mod~~ borrow checker.
 
-encountered problems/issues
+## encountered problems/issues
 - Can't literal match a zero space (`()` in regex)
 - - Will need a custom matcher struct for that, then
 - Max cleanliness means that we should really only have one string that the entire regex class can match on, rather than having each matchable token have a copy of or pointer to the string.
@@ -22,3 +22,19 @@ encountered problems/issues
 - parsing for optionals (`|` in regex) is a little bit trickier, since there's no upfront indication of their presence. 
 - - Multiple passes necessary?
 - - Or, have the root token (see above notes on implementation) work more like an B-Tree, and split/grow up upon encountering an option?
+
+## Parsing thoughts:
+- Could come in with a stack-based approach (similar to evaluating postfix notation?)
+- - push items until you encounter a closing/dividing character (`)`,`|`,`]`)
+- - this would require an additional pass per closer/divider, however
+- Alternatively, as mentioned above, go for a sort of b-tree approach? 
+
+## Structuring thoughts:
+Several types of match
+- .
+- .{x}
+- .+ can be lazy
+- .* can be lazy
+- .{x,y} can be lazy
+Solution: expand .{x} to be .*x (or, `.` repeated `x` times)
+Then, only the *many* type (`+`,`*`,`{x,y}`) can be lazy
