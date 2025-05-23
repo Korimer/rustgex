@@ -6,22 +6,12 @@ pub trait Matchable {
             matchof: Box::new(self)
         }
     }
-    //This might break if you want to match non-utf-8 chars.
 }
 
+//This might break if you want to match non-utf-8 chars.
 pub fn tochararr(string: &str) -> Vec<char>{
     string.chars().into_iter().collect()
 }
-
-pub fn popuntil<T: PartialEq>(bound: T, vectopop: &mut Vec<T>) -> Vec<T> {
-    let mut leading = Vec::<T>::new();
-    while let Some(val) = vectopop.pop() {
-        if val == bound {break;} 
-        leading.push(val);
-    }
-    leading
-}
-
 
 pub struct MatchOutcome<T: Matchable> {
     matches: Vec<(usize,usize)>,

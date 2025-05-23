@@ -16,14 +16,14 @@ impl LiteralMatcher {
     }
 }
 impl CountedMatcher {
-    pub fn new(string: &str) -> Self {
+    pub fn new(string: &str, count: usize) -> Self {
         let mut puretext = Vec::new();
         let mut numtext = "";
         CountedMatcher {
             literal: LiteralMatcher {
                 chars: puretext
             },
-            count: 0
+            count: count
         }
     }
 }
