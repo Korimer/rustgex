@@ -38,3 +38,35 @@ Several types of match
 - .{x,y} can be lazy
 Solution: expand .{x} to be .*x (or, `.` repeated `x` times)
 Then, only the *many* type (`+`,`*`,`{x,y}`) can be lazy
+
+
+## Structure theory:
+**Group**
+- Could use a better name
+- Collection of tokens in sequence
+- - its "match" function orchestrates calling match on all contained tokens
+- - if it can come up with a match that's contiguous for *every* contained token, it returns it
+- - otherwise, no match!
+**Meta**
+- A matcher that contains a single other matcher
+- - Can be thought of like a wrapper class
+- Should contain:
+- - **optional**: always produces a 0-width (0-character?) match, regardless of the wrapped matcher (`()`**`?`** in regex)
+- - **exact counted**: handles finite, definite, repeated tokens (`()`**`{x}`** in regex)
+- - **range counted**: handles finite ranges of repeated tokens (`()`**`{x,y}`** in regex)
+- - **indefinite**: handles infinite ranges of one token repeated *at least once* (`()`**`+`** in regex)
+- - **lazy**: returns the smallest-width match first (and the second smallest second, etc...). (`()+`**`?`** in regex)
+> Note: `*` should be able to be accomplished via an **optional** wrapping an **indefinite**
+...And eventually, **Capture**
+- A capture group
+- - Should populate to whatever the "parent" regex object is
+- - This parent object should be a `Group` (see above) of every token that composes the pattern, and should contain an array with one index per existing capture group.
+- A capture group should only be able to write to its corresponding index in the array.
+- Then, should the array itself be a collection of pointers to the index's respective captture group tokens?
+
+## Future optimization:
+- dog you ABSOLUTELY wanna have a "starting point" or "from" parameter
+- - As-is, `a{n}.` will have (at least) `n` matches that are guaranteed to be redundant, as a byproduct of `.`'s matches starting from position `0` instead of `n`
+- Extending off this, this property of the current implementation may produce unexpected behavior when combined with the fact that capture groups (`()`) should be able to overwrite themselves - you may end up with captures that might be *too* eager
+- - Ex: pattern of `(.)+\1` on string `11223` - this should match `1122`, but will fail to match altogether if `3` is ever captured
+- In general, make matching as lazy as possible (this doesnt mean lazy by default, it means doing no more than the minimum work necessary for eager matchers to function)

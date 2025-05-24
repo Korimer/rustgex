@@ -16,7 +16,19 @@ impl Classifier {
             return Chartype::Special;
         }
         else {
-            return Chartype::get_type(chr)
+            return Chartype::get_simple_type(chr)
+        }
+    }
+    pub fn corresponding(chr: char) -> char {
+        //whats a hashmap
+        match chr {
+            '{' => '}',
+            '}' => '{',
+            '[' => ']',
+            ']' => '[',
+            '(' => ')',
+            ')' => '(',
+            _ => chr
         }
     }
 }
@@ -32,7 +44,7 @@ pub enum Chartype {
     Grouping
 }
 impl Chartype {
-    fn get_type(chr: char) -> Chartype {
+    fn get_simple_type(chr: char) -> Chartype {
         match chr {
             '.' | '+' | '?' | '{' | '}' => Chartype::Special, 
             '[' | ']' | '(' | ')' | '|' => Chartype::Grouping,

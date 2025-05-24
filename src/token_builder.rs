@@ -4,23 +4,40 @@ use crate::classifychar::*;
 use crate::matchable::*;
 
 
-struct TokenBuilder {
+pub struct TokenBuilder {
     tokens: Vec<Box<dyn Matchable>>
 }
 impl TokenBuilder {
-    fn new(pattern: &str) -> Self {
+    /*
+    Gameplan:
+
+    */
+    pub fn new(pattern: &str) -> Self {
+        Self::group_text(pattern);
+        unimplemented!()
+    }
+
+    fn group_text(pattern: &str) -> Vec<Vec<char>> {
+        let mut builder = TokenBuilder {
+            tokens: Vec::new()
+        };
         let mut fullpattern: VecDeque<char> = pattern.chars().into_iter().collect();
-        let mut read = VecDeque::new();
-        let mut Classifier = Classifier::new();
+        let mut buffer = VecDeque::new();
+        let mut classifier = Classifier::new();
         while let Some(chr) = fullpattern.pop_front() {
-            read.push_front(chr);
+            match classifier.classify(chr) {
+                Chartype::Literal => buffer.push_front(chr),
+                Chartype::Grouping => (),
+                Chartype::Special => (),
+            };
         }
+        println!("{:?}",buffer);
         unimplemented!()
     }
 }
 
 pub fn popuntil<T: PartialEq>(bound: T, vectopop: &mut Vec<T>) -> Vec<T> {
-    let mut leading = VecDeque::<T>::new();
+    let mut leading = VecDeque::new();
     while let Some(val) = vectopop.pop() {
         if val == bound {break;} 
         leading.push_front(val);

@@ -7,8 +7,6 @@ mod token_builder;
 mod classifychar;
 
 fn main() {
-    let a = match_mechanisms::literal::LiteralMatcher::new("aba");
+    let a: match_mechanisms::literal::LiteralMatcher = match_mechanisms::literal::LiteralMatcher::new(vec!['a','b','c']);
     println!("{:?}",a.matchesof("ababa"));
-    let mut b = classifychar::Classifier::new();
-    println!("{:?}",b.classify('\\'));
 }

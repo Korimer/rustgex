@@ -9,21 +9,15 @@ pub struct CountedMatcher {
 }
 
 impl LiteralMatcher {
-    pub fn new(string: &str) -> Self {
-        LiteralMatcher {
-            chars: tochararr(string)
-        }
+    pub fn new(chars: Vec<char>) -> Self {
+        LiteralMatcher {chars}
     }
 }
 impl CountedMatcher {
-    pub fn new(string: &str, count: usize) -> Self {
-        let mut puretext = Vec::new();
-        let mut numtext = "";
+    pub fn new(chars: Vec<char>, count: usize) -> Self {
         CountedMatcher {
-            literal: LiteralMatcher {
-                chars: puretext
-            },
-            count: count
+            literal: LiteralMatcher {chars},
+            count
         }
     }
 }
