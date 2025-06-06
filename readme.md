@@ -36,13 +36,18 @@ Several types of match
 - .+ can be lazy
 - .* can be lazy
 - .{x,y} can be lazy
-Solution: expand .{x} to be .*x (or, `.` repeated `x` times)
+Solution: expand .{x} to be `.` repeated `x` times
 Then, only the *many* type (`+`,`*`,`{x,y}`) can be lazy
 
 
 ## Structure theory:
-**Group**
-- Could use a better name
+**Literal**
+- A literal character or string. `"abc"`, for example.
+- Should internally be the sole precise string it's able to match with. That is to say, escape characters should be removed.
+- - The pattern `\.\\`, for example, should produce 
+**Special**
+- A unique, single-character matcher. This includes characters like `.`, or lists like `[0-9]`
+**Sequence**
 - Collection of tokens in sequence
 - - its "match" function orchestrates calling match on all contained tokens
 - - if it can come up with a match that's contiguous for *every* contained token, it returns it
@@ -50,7 +55,7 @@ Then, only the *many* type (`+`,`*`,`{x,y}`) can be lazy
 **Meta**
 - A matcher that contains a single other matcher
 - - Can be thought of like a wrapper class
-- Should contain:
+- Meta matchers include:
 - - **optional**: always produces a 0-width (0-character?) match, regardless of the wrapped matcher (`()`**`?`** in regex)
 - - **exact counted**: handles finite, definite, repeated tokens (`()`**`{x}`** in regex)
 - - **range counted**: handles finite ranges of repeated tokens (`()`**`{x,y}`** in regex)
@@ -70,3 +75,5 @@ Then, only the *many* type (`+`,`*`,`{x,y}`) can be lazy
 - Extending off this, this property of the current implementation may produce unexpected behavior when combined with the fact that capture groups (`()`) should be able to overwrite themselves - you may end up with captures that might be *too* eager
 - - Ex: pattern of `(.)+\1` on string `11223` - this should match `1122`, but will fail to match altogether if `3` is ever captured
 - In general, make matching as lazy as possible (this doesnt mean lazy by default, it means doing no more than the minimum work necessary for eager matchers to function)
+- Woah I just learned about the possessive operator, matching *only* on the longest match is another big hit
+- - Might require kinda thourough restructuring unironically, 

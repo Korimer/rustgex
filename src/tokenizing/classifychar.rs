@@ -12,7 +12,7 @@ pub struct RegExReader<'a> {
     escaped: bool,
     txtiter: Chars<'a>,
     buffer: VecDeque<char>,
-    expecting: Option<char>,
+    expecting: Option<char>
 }
 
 impl <'a> RegExReader<'a> {

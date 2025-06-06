@@ -1,7 +1,8 @@
 use std::collections::VecDeque;
 
-use crate::classifychar::*;
+use crate::tokenizing;
 use crate::matchable::*;
+use tokenizing::classifychar::*;
 
 
 pub struct TokenBuilder {
@@ -10,7 +11,11 @@ pub struct TokenBuilder {
 impl TokenBuilder {
     /*
     Gameplan:
-
+        vec (buffer) of every char in the string
+        upon encountering the beginning of a group, flush the buffer to the stack
+        upon encountering the end of a group, pop the stack
+            Eventually, the proccess of flushing a buffer should convert that buffer to a token
+            Then, popping the stack would mean converting the topmost level of the stack to a token, and adding that token to a 
     */
     pub fn new(pattern: &str) -> Self {
         Self::group_text(pattern);
@@ -21,17 +26,7 @@ impl TokenBuilder {
         let mut builder = TokenBuilder {
             tokens: Vec::new()
         };
-        let mut fullpattern: VecDeque<char> = pattern.chars().into_iter().collect();
-        let mut buffer = VecDeque::new();
-        let mut classifier = Classifier::new();
-        while let Some(chr) = fullpattern.pop_front() {
-            match classifier.classify(chr) {
-                Chartype::Literal => buffer.push_front(chr),
-                Chartype::Grouping => (),
-                Chartype::Special => (),
-            };
-        }
-        println!("{:?}",buffer);
+        let mut classifier = RegExReader::new(pattern);
         unimplemented!()
     }
 }
