@@ -1,18 +1,18 @@
 use std::{collections::VecDeque, str::Chars};
 
-use crate::tokenizing::match_mechanisms::{
-    exact_counted::ExactCountedMatcher,
-    indefinite::IndefiniteMatcher,
-    literal::LiteralMatcher,
-    meta::MetaMatcher,
-    special::SpecialMatcher,
+use crate::tokenizing::match_mechanisms;
+use match_mechanisms::matchable::Matchable;
+use match_mechanisms::{
+    individual,
+    multiple,
+    behavioral,
 };
 
 pub struct RegExReader<'a> {
     escaped: bool,
     txtiter: Chars<'a>,
     buffer: VecDeque<char>,
-    expecting: Option<char>
+    expecting: Option<Tier>
 }
 
 impl <'a> RegExReader<'a> {
@@ -24,7 +24,7 @@ impl <'a> RegExReader<'a> {
             expecting: None
         }
     }
-    pub fn read(&mut self) -> Option<Tier> {
+    fn read(&mut self) -> Option<char> {
         if self.escaped {
             self.escaped = false;
             Some(self.literalread())
@@ -35,17 +35,13 @@ impl <'a> RegExReader<'a> {
         }
     }
 
-    fn literalread(&mut self) -> Tier {
-        let chr = self.txtiter.next().unwrap();
-        Tier::Literal(LiteralMatcher::new(Vec::from([chr])))
+    fn cur_head(&self) -> Tier {
+        unimplemented!()
     }
 
+    fn literalread(&mut self) -> char {
+        self.txtiter.next().unwrap()
+    }
 }
 
-enum Tier {
-    Literal(LiteralMatcher),
-    Special(SpecialMatcher),
-    Counted(ExactCountedMatcher),
-    Indefinite(IndefiniteMatcher),
-    Meta(MetaMatcher) //doesnt really align with the naming scheme...
-}
+enum Tier {}

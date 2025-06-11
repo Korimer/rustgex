@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use crate::tokenizing;
-use crate::matchable::*;
+use crate::tokenizing::matchable::*;
 use tokenizing::classifychar::*;
 
 
