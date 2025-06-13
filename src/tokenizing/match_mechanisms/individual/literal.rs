@@ -1,66 +1,44 @@
-use super::matchable::*;
+use crate::utils::charid;
+use crate::utils::phantom_matcher::PhantomMatcher;
 
-pub struct LiteralMatcher {
-    chars: Vec<char>
-}
-pub struct CountedMatcher {
-    literal: LiteralMatcher,
-    count: usize
+use crate::tokenizing::match_mechanisms;
+use match_mechanisms::multiple;
+use match_mechanisms::matching::Matchable;
+use match_mechanisms::matching::Matcher;
+
+pub struct Literal<'a> {
+    chr: &'a char
 }
 
-impl LiteralMatcher {
-    pub fn new(chars: Vec<char>) -> Self {
-        LiteralMatcher {chars}
-    }
-}
-impl CountedMatcher {
-    pub fn new(chars: Vec<char>, count: usize) -> Self {
-        CountedMatcher {
-            literal: LiteralMatcher {chars},
-            count
+impl <'a> Matchable for Literal<'a> {
+    fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
+        if tomatch[ind] == *self.chr {
+            vec![ind]
+        }
+        else {
+            vec![]
         }
     }
 }
 
-impl Matchable for LiteralMatcher {
-    fn matchesof(&self, tomatch: &str) -> Vec<(usize,usize)> {
-        let textchars = tochararr(tomatch);
-        let mut completed = Vec::<(usize,usize)>::new();
-        let mut tenative = Vec::<TextCord>::new();
-        for i in 0..tomatch.len() {
-            tenative.push(TextCord{from: i, len: 0});
-            let mut j = 0; 
-            while j < tenative.len() {
-                let mut incr = true;
-                let pos = &mut tenative[j];
-                let start = pos.from;
-                let cur = &mut pos.len;
-                if self.chars[*cur] == textchars[start+*cur] {
-                    *cur += 1;
-                    if *cur == self.chars.len() {
-                        completed.push(tenative.remove(j).totup());
-                        incr = false;
-                    }
-                }
-                else {
-                    tenative.remove(j);
-                    incr = false;
-                }
-                if incr {j+=1;}
-            }
-        }
-        completed
-    }
-}
-
-//a tuple class is probably the exact tool for the job here
-struct TextCord {
-    from: usize,
-    len: usize
-}
-impl TextCord {
-    //oh well
-    fn totup(self) -> (usize,usize) {
-        (self.from,self.len)
-    }
-}
+// impl <'a> Matcher for Literal<'a> {
+//     type ExtendsTo = multiple::MultipleMatcher;
+//     type ExtendsFrom = PhantomMatcher;
+    
+//     fn canextend(&self, chr: &char) -> bool {
+//         todo!()
+//     }
+    
+//     fn extend(self, chr: char) -> Self::ExtendsTo {
+//         todo!()
+//     }
+    
+//     fn extend_or_return(self, chr: char) -> Result<Self::ExtendsTo,char> where Self: Sized {
+//         if !self.canextend(&chr) {
+//             Err(chr)
+//         }
+//         else {
+//             Ok(self.extend(chr))
+//         }
+//     }
+// }

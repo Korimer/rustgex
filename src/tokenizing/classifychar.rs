@@ -1,7 +1,7 @@
 use std::{collections::VecDeque, str::Chars};
 
 use crate::tokenizing::match_mechanisms;
-use match_mechanisms::matchable::Matchable;
+use match_mechanisms::matching::Matchable;
 use match_mechanisms::{
     individual,
     multiple,

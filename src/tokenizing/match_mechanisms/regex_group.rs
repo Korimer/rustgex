@@ -1,5 +1,5 @@
-use super::matchable::Matchable;
+use super::token::Token;
 
 pub struct Group {
-    tokens: Vec<Box<dyn Matchable>>
+    tokens: Vec<Token>
 }

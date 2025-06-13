@@ -1,5 +1,6 @@
 mod tokenizing;
+mod utils;
 
 fn main() {
-    println!("nothin yet")
+    println!("nothin yet");
 }
