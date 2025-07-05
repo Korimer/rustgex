@@ -1,18 +1,21 @@
-use crate::utils::charid;
-use crate::utils::phantom_matcher::PhantomMatcher;
+use super::super::{
+    individual::GeneralIndividualMatcher,
+    matching::{Extensible, Matchable}, 
+};
 
-use crate::tokenizing::match_mechanisms;
-use match_mechanisms::multiple;
-use match_mechanisms::matching::Matchable;
-use match_mechanisms::matching::Matcher;
-
-pub struct Literal<'a> {
-    chr: &'a char
+pub struct LiteralMatcher {
+    chr: char
 }
 
-impl <'a> Matchable for Literal<'a> {
+impl LiteralMatcher {
+    pub fn new(chr: char) -> Self {
+        Self {chr}
+    }
+}
+
+impl Matchable for LiteralMatcher {
     fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
-        if tomatch[ind] == *self.chr {
+        if tomatch[ind] == self.chr {
             vec![ind]
         }
         else {
@@ -21,24 +24,18 @@ impl <'a> Matchable for Literal<'a> {
     }
 }
 
-// impl <'a> Matcher for Literal<'a> {
-//     type ExtendsTo = multiple::MultipleMatcher;
-//     type ExtendsFrom = PhantomMatcher;
+impl Extensible for LiteralMatcher {
+    fn canextend(&self, chr: &char) -> bool {
+        todo!()
+    }
     
-//     fn canextend(&self, chr: &char) -> bool {
-//         todo!()
-//     }
-    
-//     fn extend(self, chr: char) -> Self::ExtendsTo {
-//         todo!()
-//     }
-    
-//     fn extend_or_return(self, chr: char) -> Result<Self::ExtendsTo,char> where Self: Sized {
-//         if !self.canextend(&chr) {
-//             Err(chr)
-//         }
-//         else {
-//             Ok(self.extend(chr))
-//         }
-//     }
-// }
+    fn extend(self, chr: char) -> Box<dyn Extensible> {
+        todo!()
+    }
+}
+
+impl GeneralIndividualMatcher for LiteralMatcher {
+    fn try_create(chr: char) -> Option<Box<dyn GeneralIndividualMatcher>> where Self: Sized {
+        todo!()
+    }
+}

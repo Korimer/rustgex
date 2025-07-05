@@ -7,6 +7,7 @@ use match_mechanisms::{
     multiple,
     behavioral,
 };
+use match_mechanisms::RegexMatchSequence;
 
 pub struct RegExReader<'a> {
     escaped: bool,
@@ -24,6 +25,11 @@ impl <'a> RegExReader<'a> {
             expecting: None
         }
     }
+
+    pub fn into_pattern(&self) -> match_mechanisms::RegexMatchSequence {
+        unimplemented!()
+    }
+
     fn read(&mut self) -> Option<char> {
         if self.escaped {
             self.escaped = false;

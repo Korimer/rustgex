@@ -1,29 +1,3 @@
-pub mod phantom_matcher {
-    use crate::tokenizing::match_mechanisms::matching;
-    use matching::Matchable;
-    use matching::Matcher;
-
-    pub struct PhantomMatcher {}
-
-    impl Matchable for PhantomMatcher {
-        fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize> {
-            unreachable!()
-        }
-    }
-    impl Matcher for PhantomMatcher {
-        type ExtendsFrom = PhantomMatcher;
-        type ExtendsTo = PhantomMatcher;
-    
-        fn canextend(&self, chr: &char) -> bool {
-            unimplemented!()
-        }
-    
-        fn extend(self, chr: char) -> Self::ExtendsTo {
-            unimplemented!()
-        }
-    }
-}
-
 pub mod charid {
     use std::sync::LazyLock;
     use std::collections::{HashMap,HashSet};

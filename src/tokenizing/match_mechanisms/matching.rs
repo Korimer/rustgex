@@ -5,18 +5,15 @@ pub trait Matchable {
     }
 }
 
-pub trait Matcher: Matchable {
-    type ExtendsFrom: Matchable;
-    type ExtendsTo: Matchable;
-
+pub trait Extensible: Matchable {
     fn canextend(&self, chr: &char) -> bool;
-    fn extend(self, chr: char) -> Self::ExtendsTo;
-    fn extend_or_return(self, chr: char) -> Result<Self::ExtendsTo,char> where Self: Sized {
+    fn extend(self, chr: char) -> Box<dyn Extensible>;
+    fn try_extend(self, chr: char) -> Option<Box<dyn Extensible>> where Self: Sized {
         if !self.canextend(&chr) {
-            Err(chr)
+            None
         }
         else {
-            Ok(self.extend(chr))
+            Some(self.extend(chr))
         }
     }
 }
