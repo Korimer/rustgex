@@ -6,10 +6,10 @@ pub trait Matchable {
 }
 
 pub trait Extensible: Matchable {
-    fn canextend(&self, chr: &char) -> bool;
-    fn extend(self, chr: char) -> Box<dyn Extensible>;
-    fn try_extend(self, chr: char) -> Option<Box<dyn Extensible>> where Self: Sized {
-        if !self.canextend(&chr) {
+    fn canextend(&self, chr: char) -> bool;
+    fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible>;
+    fn try_extend(self: Box<Self>, chr: char) -> Option<Box<dyn Extensible>>{
+        if !self.canextend(chr) {
             None
         }
         else {
@@ -17,6 +17,21 @@ pub trait Extensible: Matchable {
         }
     }
 }
+
+// pub trait DynExtensible {
+//     fn dynamic_extend(self: Box<Self>, chr: char) -> Option<Box<dyn Extensible>>;
+// }
+
+// impl DynExtensible for dyn Extensible {
+//     fn dynamic_extend(self: Box<Self>, chr: char) -> Option<Box<dyn Extensible>> {
+//         if self.canextend(chr) {
+//             Some(self.extend(chr))
+//         } else {
+//             None
+//         }
+//     }
+
+// }
 
 //This might break if you want to match non-utf-8 chars.
 pub fn tochararr(string: &str) -> Vec<char>{
