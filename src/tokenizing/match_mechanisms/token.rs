@@ -36,6 +36,6 @@ impl Token {
 
 impl Matchable for Token {
     fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize> {
-        self.inner.as_ref().unwrap().matches(tomatch, startind);
+        self.inner.as_ref().unwrap().matches(tomatch, startind)
     }
 }

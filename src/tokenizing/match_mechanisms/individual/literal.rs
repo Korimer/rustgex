@@ -25,17 +25,17 @@ impl Matchable for LiteralMatcher {
 }
 
 impl Extensible for LiteralMatcher {
-    fn canextend(&self, chr: &char) -> bool {
+    fn canextend(&self, chr: char) -> bool {
         todo!()
     }
     
-    fn extend(self, chr: char) -> Box<dyn Extensible> {
+    fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
         todo!()
     }
 }
 
 impl GeneralIndividualMatcher for LiteralMatcher {
     fn try_create(chr: char) -> Option<Box<dyn GeneralIndividualMatcher>> where Self: Sized {
-        todo!()
+        Some(Box::new(LiteralMatcher::new(chr)))
     }
 }
