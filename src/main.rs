@@ -1,8 +1,10 @@
 mod tokenizing;
 mod utils;
 
-use tokenizing::match_mechanisms::token;
+use tokenizing::Pattern;
 fn main() {
-    
-    println!("nothin yet");
+    println!("well we good thus far");
+    let mypattern = Pattern::new("a");
+    println!("well we built");
+    println!("the truth is... {}",mypattern.quickmatch("a"));
 }

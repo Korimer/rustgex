@@ -1,13 +1,7 @@
 use std::{collections::VecDeque, str::Chars};
 
-use crate::tokenizing::match_mechanisms;
-use match_mechanisms::matching::Matchable;
-use match_mechanisms::{
-    individual,
-    multiple,
-    behavioral,
-};
-use match_mechanisms::RegexMatchSequence;
+use super::match_mechanisms::RegexMatchSequence;
+use crate::utils::regex_aliases::ParsedChar;
 
 pub struct RegExReader<'a> {
     escaped: bool,
@@ -26,8 +20,13 @@ impl <'a> RegExReader<'a> {
         }
     }
 
-    pub fn into_pattern(&self) -> match_mechanisms::RegexMatchSequence {
-        unimplemented!()
+    pub fn into_pattern(&self) -> Vec<ParsedChar> {
+        let mut patternvec = Vec::new();
+        // ugly clone, fix later
+        for chr in self.txtiter.clone() {
+            patternvec.push(ParsedChar::Char(chr));
+        }
+        patternvec
     }
 
     fn read(&mut self) -> Option<char> {

@@ -16,7 +16,7 @@ impl LiteralMatcher {
 impl Matchable for LiteralMatcher {
     fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
         if tomatch[ind] == self.chr {
-            vec![ind]
+            vec![ind+1]
         }
         else {
             vec![]

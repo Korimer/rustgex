@@ -30,3 +30,56 @@ pub mod charid {
         }
     }
 }
+
+pub mod regex_aliases {
+    
+    pub enum ParsedChar {
+        Char(char),
+        Alias(Alias)
+    }
+
+    pub enum Alias {
+        Character(Character),
+        CharacterClass(CharacterClass)
+    }
+
+    pub enum Character {
+        NewLine,
+        Tab,
+    }
+
+    pub enum CharacterClass {
+        Negation(Box<CharacterClass>),
+        DecimalDigit,
+        WordChar,
+        WhiteSpace,
+    }
+
+    impl ParsedChar {
+        pub fn unwrap_char(&self) -> &char {
+            if let ParsedChar::Char(chr) = self {chr}
+            else {panic!("Tried to unwrap a non-char")}
+        }
+    }
+    
+    impl Character {
+        pub fn translate(&self) -> char {
+            match *self {
+                Character::NewLine => '\n',
+                Character::Tab => ' ',
+            }
+        }
+    }
+
+    impl CharacterClass {
+        pub fn is_negated(&self) -> bool {
+            if let CharacterClass::Negation(_) = self {true} else {false}
+        }
+        pub fn negate(self) -> Self {
+            match self {
+                CharacterClass::Negation(chrcls) => *chrcls,
+                non_negated => CharacterClass::Negation(Box::new(non_negated)),
+            }
+        }
+    }
+}

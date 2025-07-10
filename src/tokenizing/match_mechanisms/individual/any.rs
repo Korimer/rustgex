@@ -1,24 +1,17 @@
-use std::sync::LazyLock;
-use std::collections::hash_set::HashSet;
-
 use super::super::{
     individual::GeneralIndividualMatcher,
     matching::{Extensible, Matchable}, 
 };
 
-static SPECIAL_MATCHERS: LazyLock<HashSet<char>> = LazyLock::new(|| HashSet::from([
-    '.'
-]));
+pub struct AnyMatcher;
 
-pub struct SpecialMatcher;
-
-impl Matchable for SpecialMatcher {
+impl Matchable for AnyMatcher {
     fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize> {
-        todo!()
+        vec![startind+1]
     }
 }
 
-impl Extensible for SpecialMatcher {
+impl Extensible for AnyMatcher {
     fn canextend(&self, chr: char) -> bool {
         todo!()
     }
@@ -28,8 +21,9 @@ impl Extensible for SpecialMatcher {
     }
 }
 
-impl GeneralIndividualMatcher for SpecialMatcher {
+impl GeneralIndividualMatcher for AnyMatcher {
     fn try_create(chr: char) -> Option<Box<dyn GeneralIndividualMatcher>> where Self: Sized {
-        todo!()
+        if chr == '.' {Some(Box::new(AnyMatcher))}
+        else          {None}
     }
 }

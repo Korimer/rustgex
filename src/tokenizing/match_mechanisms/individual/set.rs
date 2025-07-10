@@ -8,11 +8,12 @@ use super::super::{
 pub struct SetMatcher {
     closed: bool,
     contents: HashSet<char>,
+    negated: bool,
 }
 
 impl SetMatcher {
     pub fn new() -> Self {
-        Self {closed: false, contents: HashSet::new()}
+        Self {closed: false, contents: HashSet::new(), negated: false}
     }
     pub fn from(chrs: &[char]) -> Self {
         let mut to_fill = Self::new();
@@ -21,12 +22,15 @@ impl SetMatcher {
         to_fill.closed = true;
         to_fill
     }
+    pub fn negate(&mut self) {
+        self.negated = true;
+    }
 }
 
 impl Matchable for SetMatcher {
     fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
         if self.contents.contains(&tomatch[ind]) {
-            vec![ind]
+            vec![ind+1]
         }
         else {
             vec![]

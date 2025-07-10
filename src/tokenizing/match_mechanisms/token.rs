@@ -1,5 +1,5 @@
-use crate::tokenizing::match_mechanisms::individual::{self, GeneralIndividualMatcher, IndividualMatcher};
-
+use crate::tokenizing::match_mechanisms::individual::IndividualMatcher;
+use crate::utils::regex_aliases::ParsedChar;
 use super::matching::{Matchable,Extensible};
 
 pub struct Token {
@@ -12,7 +12,7 @@ impl Token {
             inner: None
         }
     }
-    pub fn new(chr: char) -> Self {
+    pub fn new(chr: ParsedChar) -> Self {
         Self {
             inner: Some(Box::new(
                 IndividualMatcher::from(chr)
