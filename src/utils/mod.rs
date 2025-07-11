@@ -55,30 +55,112 @@ pub mod regex_aliases {
         WhiteSpace,
     }
 
+    impl Alias {
+        pub fn escaped_to_alias(escaped_char: char) -> Option<Alias> {
+            let options = &[
+                Character::escaped_to_character,
+                CharacterClass::escaped_to_class,
+            ];
+            for opt in options {
+                let result = opt(escaped_char);
+                if result.is_some() {return result}
+            }
+            None
+        }
+    }
+
     impl ParsedChar {
         pub fn unwrap_char(&self) -> &char {
-            if let ParsedChar::Char(chr) = self {chr}
+            if let Self::Char(chr) = self {chr}
             else {panic!("Tried to unwrap a non-char")}
         }
     }
     
     impl Character {
+        pub fn escaped_to_character(escaped_char: char) -> Option<Alias> {
+            match escaped_char {
+                'n' => Some(Self::NewLine),
+                't' => Some(Self::Tab),
+                _ => None
+            }
+            .map(|character| Alias::Character(character))
+        }
+
         pub fn translate(&self) -> char {
             match *self {
-                Character::NewLine => '\n',
-                Character::Tab => ' ',
+                Self::NewLine => '\n',
+                Self::Tab => ' ',
             }
         }
     }
 
     impl CharacterClass {
+        pub fn escaped_to_class(escaped_char: char) -> Option<Alias> {
+            let negated = escaped_char.is_uppercase(); // might break on non utf8, investigate
+            let lower_char = if negated {escaped_char.to_ascii_lowercase()} else {escaped_char};
+            match lower_char {
+                'w' => Some(Self::WordChar),
+                _ => None
+            }
+            .map(|chrclass| if negated {Self::Negation(Box::new(chrclass))} else {chrclass})
+            .map(|chrclass| Alias::CharacterClass(chrclass))
+        }
         pub fn is_negated(&self) -> bool {
-            if let CharacterClass::Negation(_) = self {true} else {false}
+            if let Self::Negation(_) = self {true} else {false}
         }
         pub fn negate(self) -> Self {
             match self {
-                CharacterClass::Negation(chrcls) => *chrcls,
-                non_negated => CharacterClass::Negation(Box::new(non_negated)),
+                Self::Negation(chrcls) => *chrcls,
+                non_negated => Self::Negation(Box::new(non_negated)),
+            }
+        }
+    }
+}
+
+pub mod regex_reader {
+    use crate::utils::regex_aliases::{Alias, ParsedChar};
+
+    pub struct RegExReader<'a> {
+        escaped: bool,
+        patterntext: &'a str,
+    }
+
+    impl <'a> RegExReader<'a> {
+        fn init(pattern: &'a str) -> Self {
+            Self { 
+                escaped: false,
+                patterntext: pattern, 
+            }
+        }
+
+        pub fn new(pattern: &'a str) -> Vec<ParsedChar> {
+            let mut reader = Self::init(pattern);
+            let mut txtiter = pattern.chars().into_iter();
+            let mut fullptrn = Vec::new();
+            while let Some(chr) = txtiter.next() {
+                if let Some(parsed) = reader.read(chr) {
+                    fullptrn.push(parsed);
+                }
+            }
+            fullptrn
+        }
+
+        fn read(&mut self, chr: char) -> Option<ParsedChar> {
+            if self.escaped {
+                self.escaped = false;
+                if let Some(alias) = Alias::escaped_to_alias(chr) {
+                    Some(ParsedChar::Alias(alias))
+                } else {
+                    Some(ParsedChar::Char(chr))
+                }
+            }
+            else {
+                if chr == '\\' {
+                    self.escaped = true;
+                    None
+                } else {
+                    Some(ParsedChar::Char(chr))
+                }
             }
         }
     }

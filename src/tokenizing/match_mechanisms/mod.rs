@@ -7,16 +7,17 @@ mod token;
 mod regex_group;
 
 use matching::Matchable;
-use super::RegExReader;
-use crate::utils::regex_aliases::ParsedChar;
+use crate::utils::{
+    regex_reader::RegExReader,
+    regex_aliases::ParsedChar
+};
 
 use regex_group::TokenGroup;
 pub struct RegexMatchSequence(TokenGroup);
 
 impl RegexMatchSequence {
     pub fn new(pattern: &str) -> Self {
-        let reader = RegExReader::new(pattern);
-        Self::construct(reader.into_pattern())
+        Self::construct(RegExReader::new(pattern))
     }
     
     fn construct(ptn: Vec<ParsedChar>) -> Self {

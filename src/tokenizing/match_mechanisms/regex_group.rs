@@ -16,23 +16,15 @@ impl TokenGroup {
     }
     pub fn from(pattern: Vec<ParsedChar>) -> Self {
         let mut me = Self::new();
-        me.initvia(pattern);
+        me.init(pattern);
         me
     }
-    fn init(&mut self, chars: &mut Chars) {
-        while let Some(chr) = chars.next() {
-            let wrapped = ParsedChar::Char(chr);
-            if let Some(inner) = self.tokens.last_mut() {
-                if inner.try_extend(chr) {continue}
-            }
-            self.tokens.push(Token::new(wrapped));
-        }
-    }
-    fn initvia(&mut self, chars: Vec<ParsedChar>) {
+    fn init(&mut self, chars: Vec<ParsedChar>) {
         for chr in chars {
             if let Some(inner) = self.tokens.last_mut() {
                 if inner.try_extend(*chr.unwrap_char()) {continue}
             }
+            self.tokens.push(Token::new(chr));
         }
     }
 }

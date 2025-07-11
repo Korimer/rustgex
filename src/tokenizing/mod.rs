@@ -1,8 +1,6 @@
 mod match_mechanisms;
-mod classifychar;
 
 use match_mechanisms::RegexMatchSequence;
-use classifychar::RegExReader;
 
 pub struct Pattern(RegexMatchSequence);
 
