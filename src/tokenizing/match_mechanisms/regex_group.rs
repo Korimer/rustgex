@@ -38,16 +38,28 @@ impl Matchable for TokenGroup {
         for ind in 0..totalchars {
             possible_matches.append(&mut self.tokens[0].matches(tomatch,ind));
         }
-        
+
+        if possible_matches.len() == 0 {
+            println!("DEBUG: No potential matches found.");
+        } else {
+            println!("DEBUG: Found potential matches at indexes {possible_matches:?}");
+        }
+
+        let mut tokennum = 0;
         for tkn in &self.tokens {
+            tokennum += 1;
             let mut i = 0;
             while i < possible_matches.len() {
                 let matchoutcome = tkn.matches(tomatch, i); 
                 if matchoutcome.len() != 0 {
+                    println!("\t possible: {}, tokennum: {}, outcome: {}",possible_matches[i],tokennum,matchoutcome[0]);
+                    println!("1+{}-{} is {} btw",possible_matches[i],tokennum,possible_matches[i]-tokennum+1);
+                    println!("Proceeding with match at index {}, currently on character {}",possible_matches[i]-tokennum+1,matchoutcome[0]);
                     possible_matches[i] = matchoutcome[0];
                     i+= 1;
                 }
                 else {
+                    println!("Match at index {} aborted as it failed to match token {tokennum}",possible_matches[i]-tokennum+1);
                     possible_matches.remove(i);
                 }
             }
