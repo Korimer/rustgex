@@ -31,6 +31,27 @@ impl TokenGroup {
 
 impl Matchable for TokenGroup {
     fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize> {
-        self.tokens[0].quickmatch(tomatch)
+        let totalchars = tomatch.len();
+        let mytokens = self.tokens.len();
+
+        let mut possible_matches = Vec::new();
+        for ind in 0..totalchars {
+            possible_matches.append(&mut self.tokens[0].matches(tomatch,ind));
+        }
+        
+        for tkn in &self.tokens {
+            let mut i = 0;
+            while i < possible_matches.len() {
+                let matchoutcome = tkn.matches(tomatch, i); 
+                if matchoutcome.len() != 0 {
+                    possible_matches[i] = matchoutcome[0];
+                    i+= 1;
+                }
+                else {
+                    possible_matches.remove(i);
+                }
+            }
+        }
+        possible_matches
     }
 }

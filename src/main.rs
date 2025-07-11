@@ -3,8 +3,8 @@ mod utils;
 
 use tokenizing::Pattern;
 fn main() {
-    println!("well we good thus far");
-    let mypattern = Pattern::new("\\w");
-    println!("well we built");
-    println!("the truth is... {}",mypattern.quickmatch("a"));
+    println!("DEBUG: init success");
+    let mypattern = Pattern::new("\\wa");
+    println!("DEBUG: Pattern built");
+    println!("the truth is... {}",mypattern.quickmatch("aa"));
 }

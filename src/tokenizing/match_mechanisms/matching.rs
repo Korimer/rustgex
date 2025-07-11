@@ -1,4 +1,5 @@
 pub trait Matchable {
+    //could be renamed to matchesof
     fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize>;
     fn quickmatch(&self,tomatch: &Vec<char>) -> Vec<usize> {
         self.matches(tomatch, 0)
@@ -17,21 +18,6 @@ pub trait Extensible: Matchable {
         }
     }
 }
-
-// pub trait DynExtensible {
-//     fn dynamic_extend(self: Box<Self>, chr: char) -> Option<Box<dyn Extensible>>;
-// }
-
-// impl DynExtensible for dyn Extensible {
-//     fn dynamic_extend(self: Box<Self>, chr: char) -> Option<Box<dyn Extensible>> {
-//         if self.canextend(chr) {
-//             Some(self.extend(chr))
-//         } else {
-//             None
-//         }
-//     }
-
-// }
 
 //This might break if you want to match non-utf-8 chars.
 pub fn tochararr(string: &str) -> Vec<char>{

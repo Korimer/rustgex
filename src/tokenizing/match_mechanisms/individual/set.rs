@@ -29,7 +29,8 @@ impl SetMatcher {
 
 impl Matchable for SetMatcher {
     fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
-        if self.contents.contains(&tomatch[ind]) {
+        let contains = self.contents.contains(&tomatch[ind]); 
+        if contains != self.negated {
             vec![ind+1]
         }
         else {

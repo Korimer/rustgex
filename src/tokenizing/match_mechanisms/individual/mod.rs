@@ -71,7 +71,10 @@ impl Matchable for IndividualMatcher {
 
 impl Extensible for IndividualMatcher {
     fn canextend(&self, chr: char) -> bool {
-        todo!()
+        match chr {
+            '*'|'+'|'?' => true,
+            _ => false
+        }
     }
 
     fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
