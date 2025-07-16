@@ -33,26 +33,45 @@ pub mod charid {
 
 pub mod regex_aliases {
     
+    //Restructuring: 
+    //  parsedchar: character | charset
+    //  character: char | charalias
+    //Reason: Simplifies the decision tree to an absurd degree  
+
+    #[derive(Debug)]
     pub enum ParsedChar {
         Char(char),
         Alias(Alias)
     }
-
+    #[derive(Debug)]
     pub enum Alias {
         Character(Character),
         CharacterClass(CharacterClass)
     }
-
+    #[derive(Debug)]
     pub enum Character {
         NewLine,
         Tab,
     }
-
+    #[derive(Debug)]
     pub enum CharacterClass {
         Negation(Box<CharacterClass>),
         DecimalDigit,
         WordChar,
         WhiteSpace,
+    }
+
+    impl ParsedChar {
+        pub fn contains_set(&self) -> bool {
+            matches!(self,ParsedChar::Alias(Alias::CharacterClass(_)))
+        }
+        pub fn contains_char(&self) -> bool{!self.contains_set()}
+
+        pub fn unwrap_char(&self) -> char {
+            if let Self::Char(chr) = self {*chr} // clones...
+            else if let Self::Alias(Alias::Character(chr)) = self {chr.translate()}
+            else {panic!("Tried to unwrap a non-char")}
+        }
     }
 
     impl Alias {
@@ -69,15 +88,9 @@ pub mod regex_aliases {
         }
     }
 
-    impl ParsedChar {
-        pub fn unwrap_char(&self) -> &char {
-            if let Self::Char(chr) = self {chr}
-            else {panic!("Tried to unwrap a non-char")}
-        }
-    }
-    
     impl Character {
         pub fn escaped_to_character(escaped_char: char) -> Option<Alias> {
+            println!("DEBUG: mapping \\{escaped_char} to alias");
             match escaped_char {
                 'n' => Some(Self::NewLine),
                 't' => Some(Self::Tab),
@@ -89,7 +102,7 @@ pub mod regex_aliases {
         pub fn translate(&self) -> char {
             match *self {
                 Self::NewLine => '\n',
-                Self::Tab => ' ',
+                Self::Tab => '\t',
             }
         }
     }

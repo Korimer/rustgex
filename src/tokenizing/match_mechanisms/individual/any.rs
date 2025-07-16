@@ -6,9 +6,10 @@ use super::super::{
 pub struct AnyMatcher;
 
 impl Matchable for AnyMatcher {
-    fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize> {
-        if tomatch[startind] != '\n' {
-            vec![startind+1]
+    fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
+        if tomatch[ind] != '\n' {
+            println!("any: just matched {ind}");
+            vec![ind+1]
         }
         else {
             vec![]
