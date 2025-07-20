@@ -25,43 +25,42 @@ impl TokenGroup {
             self.tokens.push(newtkn);
         }
     }
+    fn matchfrom(&self, tomatch: &Vec<char>, startind: usize) -> Option<usize> {
+        let tknlen = self.tokens.len();
+        if tknlen == 0 {return Some(startind);}
+
+        let mut potential_matches: Vec<Vec<usize>> = Vec::new();
+
+        potential_matches.push(self.tokens[0].matches(tomatch, startind));
+        let mut token_ind = 1;
+
+        loop {
+            // if there are no viable matches from an index, it's time to backtrack.
+            while potential_matches.last().is_some_and(|inds| inds.len() == 0) {
+                potential_matches.pop();
+                token_ind -= 1;
+            }
+            // if there's nowhere left to backtrack, a match isn't possible!
+            if token_ind == 0 {return None;}
+            // all this unwrapping is safe because the above two blocks eliminate the possibility of a vec being empty.
+            let match_ind = potential_matches.last_mut().unwrap().pop().unwrap(); //lol
+            // Every token matches, so the overall pattern does too
+            if token_ind == tknlen {return Some(match_ind)} 
+            potential_matches.push(self.tokens[token_ind].matches(tomatch, match_ind));
+            token_ind += 1;
+        }
+}
+
 }
 
 impl Matchable for TokenGroup {
     fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize> {
-        let totalchars = tomatch.len();
-        let mytokens = self.tokens.len();
-
-        let mut possible_matches = Vec::new();
-        for ind in 0..totalchars {
-            possible_matches.append(&mut self.tokens[0].matches(tomatch,ind));
+        let mut allmatches = Vec::new();
+        let mut i = startind; 
+        while i < tomatch.len() {
+            if let Some(match_index) = self.matchfrom(tomatch, i) {allmatches.push(match_index)}
+            i += 1;
         }
-
-        if possible_matches.len() == 0 {
-            println!("DEBUG: No potential matches found.");
-        }
-        
-        
-        
-        let mut tokennum = 1;
-        for tkn in (&self.tokens).into_iter().skip(1) {
-            tokennum += 1;
-            println!("DEBUG: Found potential matches at indexes {possible_matches:?}");
-            let mut i = 0;
-            while i < possible_matches.len() {
-                let matchoutcome = if possible_matches[i] < totalchars {tkn.matches(tomatch, possible_matches[i])} else {vec![]}; 
-                if matchoutcome.len() != 0 {
-                    println!("Proceeding with match at index {}, currently on character {}",i+1,matchoutcome[0]);
-                    possible_matches[i] = matchoutcome[0];
-                    i+= 1;
-                }
-                else {
-                    println!("Match at index {} aborted as it failed to match token {tokennum} on character {}",i, possible_matches[i]);
-                    possible_matches.remove(i);
-                }
-            }
-        }
-        println!("TOKEN_NUM IS {tokennum} compared to token size of {}", self.tokens.len());
-        possible_matches
+        return allmatches;
     }
 }

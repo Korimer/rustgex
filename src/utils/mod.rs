@@ -90,7 +90,6 @@ pub mod regex_aliases {
 
     impl Character {
         pub fn escaped_to_character(escaped_char: char) -> Option<Alias> {
-            println!("DEBUG: mapping \\{escaped_char} to alias");
             match escaped_char {
                 'n' => Some(Self::NewLine),
                 't' => Some(Self::Tab),
