@@ -70,9 +70,12 @@ impl Matchable for IndividualMatcher {
 
 impl Extensible for IndividualMatcher {
     fn canextend(&self, chr: char) -> bool {
+        let a =
         self.0.canextend(chr)
         ||
-        <dyn GeneralMultipleMatcher>::canmorph(chr)
+        <dyn GeneralMultipleMatcher>::canmorph(chr);
+        // println!("checked if {chr} could extend, {a}");
+        a
     }
 
     fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
