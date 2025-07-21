@@ -24,7 +24,8 @@ impl Token {
     fn can_feed(&self, pchr: &ParsedChar) -> bool {
         if self.inner.is_none() {true}
         else if pchr.contains_char() {
-            self.inner.as_ref().unwrap().canextend(pchr.unwrap_char())
+            let res = self.inner.as_ref().unwrap().canextend(pchr.unwrap_char());
+            res
         }
         else {false}
     }

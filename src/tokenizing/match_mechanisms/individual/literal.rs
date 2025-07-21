@@ -15,7 +15,7 @@ impl LiteralMatcher {
 
 impl Matchable for LiteralMatcher {
     fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
-        if tomatch[ind] == self.chr {
+        if tomatch.len() > ind && tomatch[ind] == self.chr {
             vec![ind+1]
         }
         else {
@@ -26,11 +26,11 @@ impl Matchable for LiteralMatcher {
 
 impl Extensible for LiteralMatcher {
     fn canextend(&self, chr: char) -> bool {
-        todo!()
+        false
     }
     
     fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
-        todo!()
+        panic!("Tried to extend a literal matcher")
     }
 }
 

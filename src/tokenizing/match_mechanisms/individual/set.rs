@@ -29,6 +29,8 @@ impl SetMatcher {
 
 impl Matchable for SetMatcher {
     fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
+        if !self.closed { panic!("set was never closed")}
+        if tomatch.len() <= ind {return vec![];}
         let contains = self.contents.contains(&tomatch[ind]); 
         if contains != self.negated {
             vec![ind+1]
@@ -41,11 +43,14 @@ impl Matchable for SetMatcher {
 
 impl Extensible for SetMatcher {
     fn canextend(&self, chr: char) -> bool {
-        todo!()
+        !self.closed
     }
     
-    fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
-        todo!()
+    fn extend(mut self: Box<Self>, chr: char) -> Box<dyn Extensible> {
+        if self.closed {panic!("Tried to extend a closed set")}
+        if chr == ']' {self.closed = true}
+        else {self.contents.insert(chr);}
+        self
     }
 }
 

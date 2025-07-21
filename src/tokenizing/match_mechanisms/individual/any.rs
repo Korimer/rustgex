@@ -7,7 +7,7 @@ pub struct AnyMatcher;
 
 impl Matchable for AnyMatcher {
     fn matches(&self, tomatch: &Vec<char>, ind: usize) -> Vec<usize> {
-        if tomatch[ind] != '\n' {
+        if tomatch.len() <= ind && tomatch[ind] != '\n' {
             vec![ind+1]
         }
         else {

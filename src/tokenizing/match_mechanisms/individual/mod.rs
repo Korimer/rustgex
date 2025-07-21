@@ -2,14 +2,13 @@ mod literal;
 mod set;
 mod any;
 
-use std::sync::LazyLock;
-
 use crate::utils::regex_aliases::*;
 
 use literal::LiteralMatcher;
 use set::SetMatcher;
 use any::AnyMatcher;
-use super::matching::{Matchable, Extensible};
+use super::multiple::GeneralMultipleMatcher;
+use super::matching::{Matchable, Extensible, TokenMorph};
 
 //technically this should be matcher-maker... but matchmaker is funnier
 type MatchMaker = fn(char) -> Option<Box<dyn GeneralIndividualMatcher>>;
@@ -71,17 +70,17 @@ impl Matchable for IndividualMatcher {
 
 impl Extensible for IndividualMatcher {
     fn canextend(&self, chr: char) -> bool {
-        match chr {
-            '*'|'+'|'?' => true,
-            _ => false
-        }
+        self.0.canextend(chr)
+        ||
+        <dyn GeneralMultipleMatcher>::canmorph(chr)
     }
 
     fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
-        todo!()
+        if (*self.0).canextend(chr) { self.0.extend(chr) }
+        else                        { <dyn GeneralMultipleMatcher>::morph(self, chr) }
     }
 }
 
-pub trait GeneralIndividualMatcher: Matchable {
+pub trait GeneralIndividualMatcher: Extensible {
     fn try_create(chr: char) -> Option<Box<dyn GeneralIndividualMatcher>> where Self: Sized;
 }
