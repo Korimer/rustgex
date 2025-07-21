@@ -1,6 +1,8 @@
 mod exact_counted;
 mod indefinite;
-use crate::tokenizing::match_mechanisms::matching::Extensible;
+mod optional;
+
+use crate::tokenizing::match_mechanisms::{matching::Extensible, multiple::indefinite::IndefiniteMatcher};
 
 use super::matching::{Matchable,TokenMorph};
 
@@ -17,6 +19,9 @@ impl TokenMorph for dyn GeneralMultipleMatcher {
     }
     
     fn morph(morphfrom: Box<dyn Matchable>, chr: char) -> Box<Self> {
-        todo!()
+        match chr {
+            '+' => Box::new(IndefiniteMatcher(morphfrom)),
+            _ => panic!()
+        }
     }
 }

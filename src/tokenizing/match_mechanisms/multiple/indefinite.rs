@@ -1,8 +1,7 @@
-use crate::tokenizing::match_mechanisms;
-use match_mechanisms::individual::GeneralIndividualMatcher;
+use crate::tokenizing::match_mechanisms::{self, matching::Extensible, multiple::GeneralMultipleMatcher};
 use match_mechanisms::matching::Matchable;
 
-pub struct IndefiniteMatcher(Box<dyn Matchable>);
+pub struct IndefiniteMatcher(pub Box<dyn Matchable>);
 
 impl Matchable for IndefiniteMatcher {
     fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize> {
@@ -17,3 +16,15 @@ impl Matchable for IndefiniteMatcher {
         span
     }
 }
+
+impl Extensible for IndefiniteMatcher {
+    fn canextend(&self, chr: char) -> bool {
+        todo!()
+    }
+
+    fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
+        todo!()
+    }
+}
+
+impl GeneralMultipleMatcher for IndefiniteMatcher {}

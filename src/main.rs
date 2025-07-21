@@ -10,17 +10,17 @@ fn main() {
         println!("Error: should be called in the following format: \n\trustgex.exe <pattern> <to_match>");
         exit(1);
     }
-    println!("DEBUG: executed with args:");
-    let mut i = 0;
-    for arg in (&args).into_iter().skip(1) {
-        println!("\t{i}: {arg}");
-        i += 1;
-    }
-    println!("DEBUG: init success.");
+    // println!("DEBUG: executed with args:");
+    // let mut i = 0;
+    // for arg in (&args).into_iter().skip(1) {
+    //     println!("\t{i}: {arg}");
+    //     i += 1;
+    // }
+    // println!("DEBUG: init success.");
     let mypattern = Pattern::new(&args[1]);
-    println!("DEBUG: Pattern built.");
+    // println!("DEBUG: Pattern built.");
     let trvth = mypattern.quickmatch(&args[2]);
-    println!("DEBUG: Match concluded.");
+    // println!("DEBUG: Match concluded.");
     println!("the truth is... {trvth}.",);
     println!("in other words, they {} match.",if trvth {"DO"} else {"DON'T"});
 }
