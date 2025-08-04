@@ -3,7 +3,6 @@ mod individual;
 mod multiple;
 
 mod matching;
-mod token;
 mod regex_group;
 
 use matching::Matchable;

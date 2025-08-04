@@ -42,15 +42,13 @@ impl Matchable for SetMatcher {
 }
 
 impl Extensible for SetMatcher {
-    fn canextend(&self, chr: char) -> bool {
-        !self.closed
-    }
-    
-    fn extend(mut self: Box<Self>, chr: char) -> Box<dyn Extensible> {
-        if self.closed {panic!("Tried to extend a closed set")}
-        if chr == ']' {self.closed = true}
-        else {self.contents.insert(chr);}
-        self
+    fn extend(&mut self, chr: char) -> bool {
+        if self.closed {false}
+        else {
+            if chr == ']' {self.closed = true}
+            else {self.contents.insert(chr);}
+            true
+        }
     }
 }
 

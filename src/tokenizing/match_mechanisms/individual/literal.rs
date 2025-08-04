@@ -25,12 +25,8 @@ impl Matchable for LiteralMatcher {
 }
 
 impl Extensible for LiteralMatcher {
-    fn canextend(&self, chr: char) -> bool {
+    fn extend(&mut self, chr: char) -> bool {
         false
-    }
-    
-    fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
-        panic!("Tried to extend a literal matcher")
     }
 }
 

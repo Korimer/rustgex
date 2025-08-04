@@ -18,11 +18,7 @@ impl Matchable for IndefiniteMatcher {
 }
 
 impl Extensible for IndefiniteMatcher {
-    fn canextend(&self, chr: char) -> bool {
-        todo!()
-    }
-
-    fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
+    fn extend(&mut self, chr: char) -> bool {
         todo!()
     }
 }

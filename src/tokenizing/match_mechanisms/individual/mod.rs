@@ -7,8 +7,8 @@ use crate::utils::regex_aliases::*;
 use literal::LiteralMatcher;
 use set::SetMatcher;
 use any::AnyMatcher;
-use super::multiple::GeneralMultipleMatcher;
-use super::matching::{Matchable, Extensible, TokenMorph};
+use super::multiple::MultipleMatcher;
+use super::matching::{Matchable, Extensible, TokenMorph, TryMorph};
 
 //technically this should be matcher-maker... but matchmaker is funnier
 type MatchMaker = fn(char) -> Option<Box<dyn GeneralIndividualMatcher>>;
@@ -27,6 +27,15 @@ impl IndividualMatcher {
             ParsedChar::Char(chr) => Self::from_chr(chr),
             ParsedChar::Alias(alias) => Self::from_alias(alias),
         }
+    }
+
+    fn from_chr(chr: char)-> IndividualMatcher {
+        for matchertype in PRECEDENCE.iter() {
+            if let Some(matcher) = matchertype(chr) {
+                return IndividualMatcher(matcher);
+            }
+        }
+        unreachable!()
     }
 
     fn from_alias(als: Alias) -> IndividualMatcher {
@@ -51,15 +60,6 @@ impl IndividualMatcher {
         if negated {fullset.negate()}
         return IndividualMatcher(Box::new(fullset))
     }
-
-    fn from_chr(chr: char)-> IndividualMatcher {
-        for matchertype in PRECEDENCE.iter() {
-            if let Some(matcher) = matchertype(chr) {
-                return IndividualMatcher(matcher);
-            }
-        }
-        unreachable!()
-    }
 }
 
 impl Matchable for IndividualMatcher {
@@ -69,18 +69,14 @@ impl Matchable for IndividualMatcher {
 }
 
 impl Extensible for IndividualMatcher {
-    fn canextend(&self, chr: char) -> bool {
-        let a =
-        self.0.canextend(chr)
-        ||
-        <dyn GeneralMultipleMatcher>::canmorph(chr);
-        // println!("checked if {chr} could extend, {a}");
-        a
+    fn extend(&mut self, chr: char) -> bool {
+        self.0.extend(chr)
     }
+}
 
-    fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
-        if (*self.0).canextend(chr) { self.0.extend(chr) }
-        else                        { <dyn GeneralMultipleMatcher>::morph(self, chr) }
+impl TokenMorph for IndividualMatcher {
+    fn gettarget(&self) -> TryMorph {
+        TryMorph::new::<MultipleMatcher>()
     }
 }
 

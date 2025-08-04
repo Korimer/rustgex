@@ -17,12 +17,8 @@ impl Matchable for AnyMatcher {
 }
 
 impl Extensible for AnyMatcher {
-    fn canextend(&self, chr: char) -> bool {
-        todo!()
-    }
-
-    fn extend(self: Box<Self>, chr: char) -> Box<dyn Extensible> {
-        todo!()
+    fn extend(&mut self, chr: char) -> bool {
+        false
     }
 }
 

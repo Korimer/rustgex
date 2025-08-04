@@ -1,10 +1,13 @@
+use crate::tokenizing::match_mechanisms::matching::TokenMorph;
 use crate::utils::regex_aliases::ParsedChar;
-use super::matching::Matchable;
-use super::token::Token;
 
+use super::individual::IndividualMatcher;
+use super::matching::{Matchable};
 pub struct TokenGroup {
     tokens: Vec<Token>
 }
+
+type Token = Box<dyn TokenMorph>;
 
 impl TokenGroup {
     pub fn new() -> Self {
@@ -16,15 +19,30 @@ impl TokenGroup {
         me
     }
     pub fn load(&mut self, chars: Vec<ParsedChar>) {
-        //AKA, we have streams at home
-        let mut pchar_iter = chars.into_iter().peekable();
-        let mut iterref= &mut pchar_iter;
-        while iterref.peek().is_some() {
-            let mut newtkn = Token::new();
-            iterref = newtkn.feed(iterref);
-            self.tokens.push(newtkn);
+        let mut chriter = chars.into_iter();
+        if self.tokens.is_empty() {
+            if let Some(pchr) = chriter.next() {
+                self.newtoken(pchr);
+            }
+        }
+        for pchr in chriter {
+            let trailing = self.tokens.last_mut().unwrap();
+            let ischr = pchr.contains_char();
+            let cannotextend = match pchr {
+                    ParsedChar::Alias(_) => true,
+                    ParsedChar::Char(chr) => !trailing.extend(chr), //this is a copy. oh well..?
+            };
+            let canmorph = trailing.canmorph(pchr.unwrap_char());
+            if cannotextend && ischr && canmorph {
+                let tomorph = self.tokens.pop().unwrap();
+                self.tokens.push(tomorph.morph(pchr.unwrap_char()));
+            }
         }
     }
+    fn newtoken(&mut self, pchr: ParsedChar) {
+        self.tokens.push(Box::new(IndividualMatcher::from(pchr)));
+    }
+
     fn matchfrom(&self, tomatch: &Vec<char>, startind: usize) -> Option<usize> {
         let tknlen = self.tokens.len();
         if tknlen == 0 {return Some(startind);}
@@ -49,8 +67,7 @@ impl TokenGroup {
             potential_matches.push(self.tokens[token_ind].matches(tomatch, match_ind));
             token_ind += 1;
         }
-}
-
+    }
 }
 
 impl Matchable for TokenGroup {
