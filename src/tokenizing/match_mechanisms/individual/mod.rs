@@ -78,6 +78,9 @@ impl TokenMorph for IndividualMatcher {
     fn gettarget(&self) -> TryMorph {
         TryMorph::new::<MultipleMatcher>()
     }
+    fn dyn_self(self: Box<Self>) -> Box<dyn TokenMorph> {
+        self
+    }
 }
 
 pub trait GeneralIndividualMatcher: Extensible {

@@ -27,15 +27,19 @@ impl TokenGroup {
         }
         for pchr in chriter {
             let trailing = self.tokens.last_mut().unwrap();
-            let ischr = pchr.contains_char();
-            let cannotextend = match pchr {
+            let mut fed = match pchr {
                     ParsedChar::Alias(_) => true,
-                    ParsedChar::Char(chr) => !trailing.extend(chr), //this is a copy. oh well..?
+                    ParsedChar::Char(chr) => trailing.extend(chr), //this is a copy. oh well..?
             };
-            let canmorph = trailing.canmorph(pchr.unwrap_char());
-            if cannotextend && ischr && canmorph {
-                let tomorph = self.tokens.pop().unwrap();
-                self.tokens.push(tomorph.morph(pchr.unwrap_char()));
+            if !fed {
+                if pchr.contains_char() && trailing.canmorph(pchr.unwrap_char()) {
+                    let tomorph = self.tokens.pop().unwrap();
+                    self.tokens.push(tomorph.morph(pchr.unwrap_char()));
+                    fed = true;
+                }
+            }
+            if !fed {
+                self.newtoken(pchr);
             }
         }
     }

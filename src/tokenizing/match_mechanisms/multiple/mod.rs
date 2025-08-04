@@ -10,7 +10,7 @@ pub struct MultipleMatcher(Box<dyn GeneralMultipleMatcher>);
 
 impl Matchable for MultipleMatcher {
     fn matches(&self, tomatch: &Vec<char>, startind: usize) -> Vec<usize> {
-        todo!()
+        self.0.matches(tomatch, startind)
     }
 }
 
@@ -26,7 +26,11 @@ trait GeneralMultipleMatcher: Extensible {
 
 impl TokenMorph for MultipleMatcher {
     fn gettarget(&self) -> TryMorph {
-        todo!()
+        TryMorph::new::<Self>()
+    }
+    
+    fn dyn_self(self: Box<Self>) -> Box<dyn TokenMorph> {
+        self
     }
 }
 

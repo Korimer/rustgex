@@ -24,17 +24,21 @@ impl TryMorph {
     fn definedmorph<T: MorphInto + 'static>(tomorph: Box<dyn TokenMorph>, chr: char) -> Box<dyn TokenMorph> {
         <T as MorphInto>::morph(tomorph, chr)
     }
+
+    pub fn convert<T: TokenMorph + 'static>(item: Box<T>) -> Box<dyn TokenMorph> {
+        item
+    }
 }
 
 pub trait TokenMorph: Extensible {
     fn gettarget(&self) -> TryMorph;
+    fn dyn_self(self: Box<Self>) -> Box<dyn TokenMorph>;
     fn canmorph(&self, chr: char) -> bool {
         (self.gettarget().canmorph)(chr)
     }
-    fn morph(self: Box<Self>, chr: char) -> Box<dyn TokenMorph> where Self: Sized + 'static{
-        let b = self.gettarget();
-        let a: Box<dyn TokenMorph> = self as Box<dyn TokenMorph>;
-        (b.morph)(a, chr)
+    fn morph(self: Box<Self>, chr: char) -> Box<dyn TokenMorph> {
+        let target = self.gettarget();
+        (target.morph)(self.dyn_self(), chr)
     }
 }
 

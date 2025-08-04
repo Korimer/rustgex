@@ -19,7 +19,7 @@ impl Matchable for IndefiniteMatcher {
 
 impl Extensible for IndefiniteMatcher {
     fn extend(&mut self, chr: char) -> bool {
-        todo!()
+        false
     }
 }
 
